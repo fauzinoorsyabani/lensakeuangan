@@ -1,33 +1,28 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { ArrowDownRight, ArrowUpRight, Camera, ChevronRight, ReceiptText, Sparkles, WalletCards } from "lucide-react";
+import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
+const rupiah = (value: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(value);
+
+function MoneyCard({ label, value, direction, empty }: { label: string; value: number; direction: "up" | "down"; empty: boolean }) {
+  const Icon = direction === "up" ? ArrowUpRight : ArrowDownRight;
+  const isIncome = direction === "up";
+  return <article className="rounded-2xl border border-[#e3e8e0] bg-white p-5 shadow-[0_10px_30px_rgba(45,69,57,0.05)]"><div className="flex items-start justify-between"><p className="text-sm font-semibold text-[#718078]">{label}</p><span className={`grid h-9 w-9 place-items-center rounded-xl ${isIncome ? "bg-[#e0f0e1] text-[#207047]" : "bg-[#fff0eb] text-[#e85d48]"}`}><Icon className="h-[18px] w-[18px]" /></span></div><p className="mt-6 font-display text-2xl font-bold tracking-tight text-[#163d32]">{rupiah(value)}</p><p className="mt-1 text-xs text-[#9aa39c]">{empty ? "Belum ada data bulan ini" : "Bulan berjalan"}</p></article>;
+}
+
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const [, setLocation] = useLocation();
+  const dashboard = trpc.dashboard.summary.useQuery();
+  if (dashboard.isLoading) return <div className="grid min-h-[45vh] place-items-center text-sm font-bold text-[#6e7d74]">Menyiapkan ringkasan keuangan…</div>;
+  if (dashboard.isError) return <div className="rounded-[1.5rem] border border-[#f4d8cc] bg-[#fff9f6] p-6"><p className="text-sm font-bold text-[#7a3d30]">Ringkasan keuangan belum dapat dimuat.</p><p className="mt-1 text-xs text-[#91655b]">Periksa koneksi Anda, lalu coba lagi.</p><button onClick={() => dashboard.refetch()} className="mt-4 rounded-xl bg-[#e85d48] px-4 py-2.5 text-xs font-bold text-white">Coba lagi</button></div>;
+  const data = dashboard.data ?? { summary: { income: 0, expense: 0, balance: 0 }, topCategories: [], monthlyTrend: [], recentTransactions: [] };
+  const maxChart = Math.max(1, ...data.monthlyTrend.flatMap((month) => [month.income, month.expense]));
+  const isEmpty = data.recentTransactions.length === 0;
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
-  );
+  return <div className="animate-in fade-in duration-500"><section className="relative overflow-hidden rounded-[2rem] bg-[#163d32] px-6 py-7 text-white shadow-[0_18px_50px_rgba(22,61,50,0.18)] lg:px-8 lg:py-8"><div className="absolute right-[-2rem] top-[-3rem] h-44 w-44 rounded-full border-[22px] border-[#2c6654]" /><div className="absolute bottom-[-5rem] right-[20%] h-36 w-36 rounded-full border-[18px] border-[#255846]" /><div className="relative flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between"><div className="max-w-xl"><div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-[#f5d5a7]"><Sparkles className="h-3.5 w-3.5" />Ruang keuangan Anda</div><h1 className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight lg:text-4xl">Uang yang tercatat memberi ruang untuk bernapas.</h1><p className="mt-3 max-w-md text-sm leading-6 text-[#cce0d3]">Mulai dengan satu foto struk. Kami akan menyiapkan detailnya untuk Anda periksa.</p></div><button onClick={() => setLocation("/scan")} className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#f5be73] px-5 text-sm font-bold text-[#163d32] transition hover:bg-[#ffd494] active:scale-[0.97]"><Camera className="h-4 w-4" />Scan struk</button></div></section>
+    <section className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3"><MoneyCard label="Pemasukan" value={data.summary.income} direction="up" empty={isEmpty} /><MoneyCard label="Pengeluaran" value={data.summary.expense} direction="down" empty={isEmpty} /><article className="rounded-2xl border border-[#d6e4d7] bg-[#eaf3e9] p-5 shadow-[0_10px_30px_rgba(45,69,57,0.04)] sm:col-span-2 xl:col-span-1"><div className="flex items-start justify-between"><p className="text-sm font-semibold text-[#52715e]">Saldo bersih</p><span className="grid h-9 w-9 place-items-center rounded-xl bg-white/70 text-[#163d32]"><WalletCards className="h-[18px] w-[18px]" /></span></div><p className="mt-6 font-display text-2xl font-bold tracking-tight text-[#163d32]">{rupiah(data.summary.balance)}</p><p className="mt-1 text-xs text-[#75907d]">{isEmpty ? "Tambahkan transaksi untuk melihat arus kas." : "Pemasukan dikurangi pengeluaran bulan ini."}</p></article></section>
+    <section className="mt-7 grid gap-6 xl:grid-cols-[1.65fr_1fr]"><article className="rounded-[1.5rem] border border-[#e3e8e0] bg-white p-5 shadow-[0_10px_30px_rgba(45,69,57,0.05)] lg:p-6"><div className="flex items-start justify-between gap-4"><div><p className="font-display text-lg font-bold tracking-tight">Arus kas bulanan</p><p className="mt-1 text-xs text-[#7a867e]">Pemasukan dan pengeluaran enam bulan terakhir</p></div><span className="rounded-lg bg-[#f2f5f0] px-3 py-2 text-xs font-bold text-[#52715e]">IDR</span></div><div className="mt-7 grid h-52 grid-cols-6 items-end gap-4 border-b border-dashed border-[#dce5dc] pb-1">{data.monthlyTrend.map((month) => <div key={month.label} className="flex h-full flex-col items-center justify-end gap-2"><div className="flex h-[168px] items-end gap-1"><i className="w-2 rounded-t-md bg-[#2e8b57]" style={{ height: `${Math.max(3, (month.income / maxChart) * 100)}%` }} /><i className="w-2 rounded-t-md bg-[#e85d48]" style={{ height: `${Math.max(3, (month.expense / maxChart) * 100)}%` }} /></div><span className="text-[9px] font-semibold text-[#9ba59e]">{month.label}</span></div>)}</div><div className="mt-5 flex items-center gap-5 text-xs font-semibold text-[#6f7c74]"><span className="inline-flex items-center gap-2"><i className="h-2.5 w-2.5 rounded-full bg-[#2e8b57]" />Pemasukan</span><span className="inline-flex items-center gap-2"><i className="h-2.5 w-2.5 rounded-full bg-[#e85d48]" />Pengeluaran</span></div></article>
+      <article className="rounded-[1.5rem] border border-[#e3e8e0] bg-white p-5 shadow-[0_10px_30px_rgba(45,69,57,0.05)] lg:p-6"><div><p className="font-display text-lg font-bold tracking-tight">Kategori teratas</p><p className="mt-1 text-xs text-[#7a867e]">Dari pengeluaran bulan ini</p></div>{data.topCategories.length ? <div className="mt-7 space-y-4">{data.topCategories.map((category, index) => <div key={category.name}><div className="flex items-center justify-between text-xs"><span className="font-bold text-[#52655b]">{category.name}</span><span className="text-[#718078]">{rupiah(category.total)}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-[#edf1eb]"><div className="h-full rounded-full bg-[#e85d48]" style={{ width: `${Math.max(8, (category.total / data.topCategories[0].total) * 100)}%`, opacity: 1 - index * 0.14 }} /></div></div>)}</div> : <div className="mt-7 grid place-items-center rounded-2xl bg-[#f8faf6] px-5 py-8 text-center"><ReceiptText className="h-6 w-6 text-[#d0846e]" /><p className="mt-3 text-sm font-bold">Belum ada kategori</p><p className="mt-1 text-xs leading-5 text-[#7a867e]">Kategori muncul setelah transaksi pertama disetujui.</p></div>}</article></section>
+    <section className="mt-7 rounded-[1.5rem] border border-[#e3e8e0] bg-white p-5 shadow-[0_10px_30px_rgba(45,69,57,0.05)] lg:p-6"><div className="flex items-center justify-between gap-4"><div><p className="font-display text-lg font-bold tracking-tight">Transaksi terbaru</p><p className="mt-1 text-xs text-[#7a867e]">Catatan yang sudah Anda setujui.</p></div><button onClick={() => setLocation("/transaksi")} className="inline-flex items-center gap-1 text-xs font-bold text-[#207047] hover:text-[#163d32]">Lihat semua <ChevronRight className="h-4 w-4" /></button></div>{data.recentTransactions.length ? <div className="mt-5 divide-y divide-[#edf0eb]">{data.recentTransactions.map((row) => <button key={row.transaction.id} onClick={() => row.transaction.receiptId ? setLocation(`/review/${row.transaction.receiptId}`) : setLocation("/transaksi")} className="flex w-full items-center gap-3 py-3 text-left hover:bg-[#fafcf8]"><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#eef5ed] text-[#207047]"><ReceiptText className="h-4 w-4" /></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{row.transaction.merchant || "Transaksi tanpa merchant"}</span><span className="mt-0.5 block text-xs text-[#829087]">{row.categoryName || "Lainnya"} · {new Date(row.transaction.occurredAt).toLocaleDateString("id-ID")}</span></span><span className={`text-sm font-bold ${row.transaction.type === "income" ? "text-[#27804b]" : "text-[#d85340]"}`}>{row.transaction.type === "income" ? "+" : "−"}{rupiah(Number(row.transaction.total))}</span></button>)}</div> : <div className="mt-6 flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#d9e2d8] bg-[#fbfcfa] px-5 py-10 text-center"><ReceiptText className="h-6 w-6 text-[#e85d48]" /><p className="mt-4 text-sm font-bold">Belum ada transaksi untuk ditampilkan</p><button onClick={() => setLocation("/scan")} className="mt-4 rounded-xl border border-[#cfe0cf] bg-white px-4 py-2.5 text-xs font-bold text-[#207047] hover:bg-[#eef6ed]">Mulai scan</button></div>}</section>
+  </div>;
 }

@@ -1,0 +1,21 @@
+# Project TODO
+
+- [x] Menetapkan desain visual fintech yang responsif serta memasang DashboardLayout untuk desktop dan navigasi bawah pada mobile.
+- [x] Menyediakan empat rute utama dengan label persis: Dashboard, Scan, Transaksi, Pengaturan.
+- [x] Menambahkan skema database categories, receipts, transactions, transaction_items, dan extraction_runs dengan relasi serta isolasi ketat berdasarkan userId.
+- [x] Menyelesaikan manajemen kategori personal: kategori bawaan Indonesia, buat, ubah, dan hapus kategori non-default dengan validasi aman per pengguna.
+- [x] Menyelesaikan prosedur tRPC terlindungi untuk dashboard, transaksi, kategori, receipt, dan review tanpa akses data lintas pengguna.
+- [x] Membuat dashboard dengan ringkasan pemasukan, pengeluaran, saldo bersih, grafik tren bulanan, kategori pengeluaran terbesar, dan transaksi terbaru.
+- [x] Membuat capture kamera getUserMedia dengan framing guide, preview, retake, unggah multi-foto, dan fallback file picker saat kamera ditolak/tidak tersedia.
+- [x] Menyimpan gambar struk melalui S3 dan hanya menyimpan storageKey beserta metadata di database tanpa byte gambar mentah.
+- [x] Menyelesaikan alur receipt nyata: uploaded → processing → needs_review → approved / failed, termasuk retry yang menjalankan pemrosesan ulang.
+- [x] Mengintegrasikan gemini-3-flash-preview di server untuk ekstraksi struk dengan JSON Schema ketat dan validasi hasil.
+- [x] Menyelesaikan layar review manusia: foto asli, indikator confidence, fallback status gagal, semua field dapat diedit termasuk quantity dan unit price, pemilih kategori, serta aksi approve/reject.
+- [x] Membuat daftar Transaksi dengan filter tanggal, kategori, tipe, metode pembayaran, pencarian merchant, edit, hapus, dan tautan ke foto struk sumber.
+- [x] Menyelesaikan loading, empty, error, permission-denied, validasi file, batas akses, dan perlindungan API key sisi server pada seluruh halaman utama.
+- [ ] Menyelesaikan test dan verifikasi browser alur utama, termasuk isolasi operasi mutasi lintas pengguna serta retry pipeline receipt.
+- [x] Memperbarui README dengan arsitektur, alur scan, model AI, skema status, dan catatan keamanan.
+- [ ] Menambahkan test isolasi untuk operasi kategori create/update/delete dan review get/approve/reject agar tidak dapat mengakses data pengguna lain.
+- [x] Menambahkan test pipeline receipt untuk jalur gagal lalu retry dari failed ke processing dan hasil akhir.
+- [x] Melakukan verifikasi browser responsif pada Dashboard, Scan, Transaksi, dan Pengaturan; alur proses/review tercakup melalui test pipeline server dan bukti dicatat di verification-notes.md.
+- [ ] Melakukan verifikasi interaktif browser scan → upload → process → review → approve dengan foto struk nyata dan bukti status/transaksi tersimpan.
