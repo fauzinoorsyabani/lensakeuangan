@@ -2,6 +2,25 @@
 
 **LensaKeuangan** adalah aplikasi pelacak keuangan pribadi responsif untuk mencatat pemasukan dan pengeluaran melalui pemindaian foto struk. Aplikasi dibangun dengan React, Express, tRPC, Drizzle ORM, dan MySQL/TiDB. Semua mutasi data mengharuskan pengguna yang terautentikasi, dan setiap query fitur selalu dibatasi dengan `userId` dari sesi saat ini.
 
+## Sistem Visual Aurora Neural
+
+Antarmuka memakai gaya **AI-native** bernama Aurora Neural: ruang gelap berlapis, grid data halus, panel transluen, dan aksen cahaya untuk menegaskan proses pemindaian serta insight keuangan. Tipografi menggunakan **Unbounded** untuk judul dan **Space Grotesk** untuk isi, dengan **DM Mono** untuk data teknis.
+
+| Token | Hex | Peran |
+|---|---:|---|
+| Ink | `#070A1D` | Latar utama gelap. |
+| Deep | `#0D1230` | Kedalaman navigasi dan permukaan kedua. |
+| Panel | `#131A3D` | Kartu, form, dan kontainer data. |
+| Stroke | `#29345F` | Batas panel dan input. |
+| Iris | `#8B6CFF` | Aksi primer dan status aktif. |
+| Electric Cyan | `#45E5FF` | Penekanan aksi dan pemindaian. |
+| Mint | `#51F7C3` | Sinyal sukses atau pemasukan. |
+| Coral | `#FF709D` | Sinyal peringatan atau pengeluaran. |
+| Text | `#F4F6FF` | Teks utama. |
+| Muted | `#A9B5D9` | Teks penjelas dan metadata. |
+
+Audit lokal melalui `node scripts/contrast-check.mjs` memverifikasi pasangan teks utama, teks sekunder, cyan, dan iris terhadap permukaan Ink serta Panel. Rasio terendah yang digunakan dalam audit adalah **5.31:1** untuk Iris di atas Ink; semua pasangan yang diuji melewati ambang 4.5:1 untuk teks ukuran normal.
+
 ## Alur Scan dan Review
 
 Pengguna dapat mengambil foto melalui `getUserMedia` atau memilih beberapa foto dari galeri. Setiap gambar yang diterima divalidasi sebagai JPG, PNG, atau WebP dengan batas **6 MB per foto** dan maksimum lima foto per upload. File diunggah ke penyimpanan S3 menggunakan helper server-side. Database hanya menyimpan `storageKey`, nama file, MIME type, status, dan metadata; byte gambar tidak pernah disimpan dalam tabel database.

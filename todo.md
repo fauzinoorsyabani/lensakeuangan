@@ -19,3 +19,10 @@
 - [x] Menambahkan test pipeline receipt untuk jalur gagal lalu retry dari failed ke processing dan hasil akhir.
 - [x] Melakukan verifikasi browser responsif pada Dashboard, Scan, Transaksi, dan Pengaturan; alur proses/review tercakup melalui test pipeline server dan bukti dicatat di verification-notes.md.
 - [ ] Melakukan verifikasi interaktif browser scan → upload → process → review → approve dengan foto struk nyata dan bukti status/transaksi tersimpan.
+- [ ] Menetapkan sistem desain AI-native dengan palet warna semantik yang terdokumentasi dan konsisten di seluruh antarmuka.
+- [ ] Mengganti tipografi serta memperbarui DashboardLayout, Dashboard, Scan, Transaksi, Pengaturan, dan Review agar terasa futuristik, tetap jelas, dan responsif.
+- [ ] Memverifikasi ulang kontras, responsivitas, typecheck, test, dan build setelah perbaikan visual AI-native.
+- [x] Menambahkan aksen AI-native spesifik pada Transactions, Pengaturan, dan ReceiptReview serta memverifikasi route Review pada desktop dan mobile.
+- [x] Menerapkan workbench Aurora Neural secara eksplisit di halaman Transaksi dan mendokumentasikan perubahannya.
+- [ ] Memverifikasi layar Review berisi data dengan foto struk nyata saat tersedia; sementara itu, nyatakan cakupan verifikasi fallback secara akurat.
+- [ ] Memverifikasi tema Aurora Neural pada state login/unauthenticated dan mencatat audit kontras secara terukur.

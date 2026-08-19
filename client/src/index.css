@@ -1,10 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
+/*
+  Aurora Neural palette
+  Ink #070A1D · Deep #0D1230 · Panel #131A3D · Stroke #29345F
+  Iris #8B6CFF · Cyan #45E5FF · Mint #51F7C3 · Coral #FF709D
+  Text #F4F6FF · Muted #A9B5D9
+*/
 @theme inline {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -18,23 +24,100 @@
 
 @layer base {
   :root {
-    --background: oklch(0.971 0.013 105);
-    --foreground: oklch(0.281 0.047 158);
-    --primary: oklch(0.33 0.067 158);
-    --primary-foreground: oklch(0.985 0.006 100);
-    --muted: oklch(0.945 0.016 120);
-    --muted-foreground: oklch(0.54 0.022 150);
-    --border: oklch(0.895 0.017 130);
-    --ring: oklch(0.56 0.098 154);
+    --background: oklch(0.12 0.04 278);
+    --foreground: oklch(0.97 0.01 270);
+    --primary: oklch(0.69 0.19 294);
+    --primary-foreground: oklch(0.98 0.01 270);
+    --muted: oklch(0.19 0.05 274);
+    --muted-foreground: oklch(0.74 0.04 274);
+    --border: oklch(0.31 0.06 274);
+    --ring: oklch(0.76 0.16 300);
+    --ai-ink: #070a1d;
+    --ai-deep: #0d1230;
+    --ai-panel: #131a3d;
+    --ai-panel-strong: #1a2350;
+    --ai-stroke: #29345f;
+    --ai-iris: #8b6cff;
+    --ai-cyan: #45e5ff;
+    --ai-mint: #51f7c3;
+    --ai-coral: #ff709d;
+    --ai-text: #f4f6ff;
+    --ai-muted: #a9b5d9;
   }
 
   * { @apply border-border; }
-  html { background: #f7f5ef; }
+  html { background: var(--ai-ink); }
   body { @apply bg-background text-foreground font-sans antialiased; }
   button, input, select, textarea { font: inherit; }
   button { cursor: pointer; }
-  ::selection { background: #d9efdf; color: #163d32; }
+  ::selection { background: var(--ai-iris); color: var(--ai-text); }
 }
+
+.ai-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 16% -4%, rgba(139,108,255,.28), transparent 30rem),
+    radial-gradient(circle at 96% 10%, rgba(69,229,255,.15), transparent 28rem),
+    radial-gradient(circle at 52% 112%, rgba(81,247,195,.09), transparent 32rem),
+    var(--ai-ink) !important;
+  color: var(--ai-text) !important;
+}
+
+.ai-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .22;
+  background-image: linear-gradient(rgba(91,112,183,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(91,112,183,.14) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
+.ai-shell > * { position: relative; z-index: 1; }
+
+/* Adapt the existing finance components to the palette without changing their data contracts. */
+.ai-shell [class*="bg-white"],
+.ai-shell [class*="bg-\[#"],
+.ai-shell [class*="bg-\[radial-gradient"] {
+  background-color: rgba(19, 26, 61, .86) !important;
+  background-image: none !important;
+  backdrop-filter: blur(18px);
+}
+
+.ai-shell [class*="border-\[#"], .ai-shell [class*="border-white"] { border-color: rgba(96, 116, 187, .36) !important; }
+.ai-shell [class*="text-\[#"] { color: var(--ai-text) !important; }
+.ai-shell [class*="text-muted"], .ai-shell [class*="text-\[#7"], .ai-shell [class*="text-\[#8"], .ai-shell [class*="text-\[#9"] { color: var(--ai-muted) !important; }
+.ai-shell [class*="shadow-"] { box-shadow: 0 18px 50px rgba(2, 5, 20, .34) !important; }
+
+.ai-shell input, .ai-shell select, .ai-shell textarea {
+  background: rgba(7, 10, 29, .74) !important;
+  color: var(--ai-text) !important;
+  border-color: rgba(96, 116, 187, .52) !important;
+}
+.ai-shell input::placeholder { color: #8290bc !important; }
+.ai-shell option { background: var(--ai-deep); color: var(--ai-text); }
+
+.ai-shell .ai-hero {
+  background: linear-gradient(118deg, #151346 0%, #1a1761 48%, #0e4056 100%) !important;
+  border: 1px solid rgba(125, 108, 255, .5) !important;
+  box-shadow: 0 24px 70px rgba(30, 20, 103, .48), inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+.ai-shell .ai-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 80% 14%, rgba(69,229,255,.28), transparent 18rem); }
+.ai-shell .ai-hero > * { position: relative; z-index: 1; }
+.ai-shell .ai-capture { background: radial-gradient(circle at 48% 12%, #263d84 0%, #14183e 52%, #090d26 100%) !important; border-color: rgba(69,229,255,.28) !important; }
+.ai-shell .ai-primary { background: linear-gradient(135deg, var(--ai-iris), #5d9cff 56%, var(--ai-cyan)) !important; color: #070a1d !important; border: 0 !important; box-shadow: 0 12px 28px rgba(99, 92, 255, .38) !important; }
+.ai-shell .ai-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.ai-shell .ai-nav-active { background: linear-gradient(135deg, rgba(139,108,255,.32), rgba(69,229,255,.16)) !important; color: var(--ai-text) !important; border: 1px solid rgba(139,108,255,.45) !important; }
+.ai-neon { color: var(--ai-cyan) !important; }
+.ai-palette-dot { box-shadow: 0 0 16px currentColor; }
+.ai-shell .ai-transaction-workbench > section:first-of-type { border-color: rgba(69,229,255,.42) !important; box-shadow: inset 0 1px 0 rgba(69,229,255,.16), 0 18px 50px rgba(2,5,20,.34) !important; }
+.ai-shell .ai-transaction-workbench > section:first-of-type label:first-child { box-shadow: inset 3px 0 0 var(--ai-cyan); }
+.ai-shell .ai-settings-node { background: linear-gradient(135deg, rgba(139,108,255,.18), rgba(69,229,255,.08)) !important; border-color: rgba(139,108,255,.36) !important; }
+.ai-shell .ai-review-source { border-color: rgba(69,229,255,.44) !important; box-shadow: inset 0 1px 0 rgba(69,229,255,.18), 0 18px 50px rgba(2,5,20,.34) !important; }
+.ai-shell .ai-review-draft { border-color: rgba(139,108,255,.5) !important; box-shadow: inset 0 1px 0 rgba(139,108,255,.18), 0 18px 50px rgba(2,5,20,.34) !important; }
+.ai-shell .ai-confidence { background: rgba(69,229,255,.13) !important; color: var(--ai-cyan) !important; border: 1px solid rgba(69,229,255,.28); }
+.ai-shell .ai-login-card { background: linear-gradient(145deg, rgba(24,31,75,.92), rgba(12,17,47,.94)) !important; border-color: rgba(139,108,255,.46) !important; box-shadow: 0 28px 80px rgba(2,5,20,.55), inset 0 1px 0 rgba(255,255,255,.12) !important; }
 
 @media (prefers-reduced-motion: no-preference) {
   .animate-in { animation-duration: 260ms; animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); }
