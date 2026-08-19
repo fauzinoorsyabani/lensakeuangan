@@ -26,3 +26,7 @@
 - [x] Menerapkan workbench Aurora Neural secara eksplisit di halaman Transaksi dan mendokumentasikan perubahannya.
 - [ ] Memverifikasi layar Review berisi data dengan foto struk nyata saat tersedia; sementara itu, nyatakan cakupan verifikasi fallback secara akurat.
 - [ ] Memverifikasi tema Aurora Neural pada state login/unauthenticated dan mencatat audit kontras secara terukur.
+- [ ] Mengganti sistem Aurora Neural menjadi palet monokrom hitam-putih dengan token semantik tanpa aksen warna.
+- [ ] Menyelaraskan DashboardLayout, Dashboard, Scan, Transaksi, Pengaturan, Review, login, serta komponen status ke tema monokrom.
+- [ ] Memperbarui dokumentasi palet dan audit kontras, lalu memverifikasi responsivitas, typecheck, test, dan build tema monokrom.
+- [ ] Memverifikasi tema monokrom pada state login/unauthenticated dan layar Review berisi data nyata di desktop serta mobile.

@@ -11,3 +11,5 @@
 - Route Review diverifikasi pada desktop dan mobile dalam keadaan receipt tidak tersedia. Kartu fallback, tombol kembali, header, serta navigasi bawah mobile mempertahankan kontras dan palet Aurora Neural.
 - Halaman Transaksi yang diperbarui diverifikasi pada desktop dan mobile. Filter memiliki aksen cyan, label workbench terlihat jelas, panel daftar data berlapis, dan navigasi mobile tetap mempertahankan hierarki tanpa overflow.
 - Audit token Aurora Neural mencatat rasio kontras: Text/Ink 18.20:1, Muted/Ink 9.62:1, Text/Panel 15.67:1, Muted/Panel 8.29:1, Cyan/Ink 12.99:1, dan Iris/Ink 5.31:1. Semua pasangan yang diuji berada di atas 4.5:1.
+- Tema Obsidian Canvas diverifikasi pada Dashboard, Scan, Transaksi, dan Pengaturan untuk desktop serta mobile. Aksen warna telah diganti menjadi hitam, abu-abu, dan putih; tombol utama, navigasi aktif, kontrol scan, kartu, filter, dan dot kategori seluruhnya tampil monokrom.
+- Audit monokrom menghasilkan rasio Text/Ink 18.69:1, Muted/Ink 8.47:1, Text/Panel 17.18:1, Muted/Panel 7.79:1, Soft White/Ink 14.30:1, dan Soft White/Panel 13.14:1.

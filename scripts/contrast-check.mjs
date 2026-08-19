@@ -1,10 +1,9 @@
 const palette = {
-  ink: "#070A1D",
-  panel: "#131A3D",
-  text: "#F4F6FF",
-  muted: "#A9B5D9",
-  cyan: "#45E5FF",
-  iris: "#8B6CFF",
+  ink: "#050505",
+  panel: "#121212",
+  text: "#F5F5F5",
+  muted: "#A7A7A7",
+  softWhite: "#D8D8D8",
 };
 
 function hexToLinear(hex) {
@@ -27,8 +26,8 @@ const checks = [
   ["Muted on Ink", palette.muted, palette.ink],
   ["Text on Panel", palette.text, palette.panel],
   ["Muted on Panel", palette.muted, palette.panel],
-  ["Cyan on Ink", palette.cyan, palette.ink],
-  ["Iris on Ink", palette.iris, palette.ink],
+  ["Soft White on Ink", palette.softWhite, palette.ink],
+  ["Soft White on Panel", palette.softWhite, palette.panel],
 ].map(([label, foreground, background]) => ({ label, ratio: Number(contrast(foreground, background).toFixed(2)), foreground, background }));
 
 console.table(checks);

@@ -2,24 +2,21 @@
 
 **LensaKeuangan** adalah aplikasi pelacak keuangan pribadi responsif untuk mencatat pemasukan dan pengeluaran melalui pemindaian foto struk. Aplikasi dibangun dengan React, Express, tRPC, Drizzle ORM, dan MySQL/TiDB. Semua mutasi data mengharuskan pengguna yang terautentikasi, dan setiap query fitur selalu dibatasi dengan `userId` dari sesi saat ini.
 
-## Sistem Visual Aurora Neural
+## Sistem Visual Obsidian Canvas
 
-Antarmuka memakai gaya **AI-native** bernama Aurora Neural: ruang gelap berlapis, grid data halus, panel transluen, dan aksen cahaya untuk menegaskan proses pemindaian serta insight keuangan. Tipografi menggunakan **Unbounded** untuk judul dan **Space Grotesk** untuk isi, dengan **DM Mono** untuk data teknis.
+Antarmuka memakai gaya **AI-native monokrom** bernama Obsidian Canvas: ruang hitam berlapis, grid data halus, panel gelap, dan aksen putih untuk menegaskan proses pemindaian serta insight keuangan. Tipografi menggunakan **Unbounded** untuk judul dan **Space Grotesk** untuk isi, dengan **DM Mono** untuk data teknis.
 
 | Token | Hex | Peran |
 |---|---:|---|
-| Ink | `#070A1D` | Latar utama gelap. |
-| Deep | `#0D1230` | Kedalaman navigasi dan permukaan kedua. |
-| Panel | `#131A3D` | Kartu, form, dan kontainer data. |
-| Stroke | `#29345F` | Batas panel dan input. |
-| Iris | `#8B6CFF` | Aksi primer dan status aktif. |
-| Electric Cyan | `#45E5FF` | Penekanan aksi dan pemindaian. |
-| Mint | `#51F7C3` | Sinyal sukses atau pemasukan. |
-| Coral | `#FF709D` | Sinyal peringatan atau pengeluaran. |
-| Text | `#F4F6FF` | Teks utama. |
-| Muted | `#A9B5D9` | Teks penjelas dan metadata. |
+| Ink | `#050505` | Latar utama hitam. |
+| Deep | `#0C0C0C` | Kedalaman navigasi dan permukaan kedua. |
+| Panel | `#121212` | Kartu, form, dan kontainer data. |
+| Stroke | `#303030` | Batas panel dan input. |
+| White | `#F5F5F5` | Teks utama dan aksi primer. |
+| Soft White | `#D8D8D8` | Penekanan sekunder dan ikon. |
+| Muted | `#A7A7A7` | Teks penjelas dan metadata. |
 
-Audit lokal melalui `node scripts/contrast-check.mjs` memverifikasi pasangan teks utama, teks sekunder, cyan, dan iris terhadap permukaan Ink serta Panel. Rasio terendah yang digunakan dalam audit adalah **5.31:1** untuk Iris di atas Ink; semua pasangan yang diuji melewati ambang 4.5:1 untuk teks ukuran normal.
+Audit lokal melalui `node scripts/contrast-check.mjs` memverifikasi pasangan teks utama, teks sekunder, dan putih lembut terhadap permukaan Ink serta Panel. Semua pasangan yang diuji melewati ambang 4.5:1 untuk teks ukuran normal.
 
 ## Alur Scan dan Review
 
