@@ -39,4 +39,5 @@
 - [x] Menyiapkan handoff Vercel: import repositori, build command, output directory, rewrites, dan daftar environment production tanpa mengekspos secret.
 - [x] Mendokumentasikan batasan Vercel serverless dan menambahkan template environment aman yang dapat di-copy ke Project Settings tanpa memasukkan secret ke Git.
 - [x] Menambahkan langkah handoff Vercel eksplisit dari import repositori GitHub hingga verifikasi rewrite SPA/API dan environment production.
-- [ ] Mengubah repository GitHub LensaKeuangan menjadi public, memverifikasi tidak ada secret pada riwayat kerja terbaru, dan push branch main terbaru.
+- [x] Mengubah repository GitHub LensaKeuangan menjadi public, memverifikasi tidak ada secret pada riwayat kerja terbaru, dan push branch main terbaru.
+- [x] Memeriksa riwayat commit yang dipublikasikan untuk memastikan tidak ada credential atau file environment yang pernah terdorong ke GitHub.
