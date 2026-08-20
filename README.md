@@ -80,6 +80,15 @@ Tambahkan variabel berikut pada **Project Settings → Environment Variables** d
 
 Setelah repository terhubung ke Vercel, jalankan deployment dari dashboard Vercel dan atur OAuth redirect URL ke `https://<domain-anda>/api/oauth/callback`. Untuk preview deployment, gunakan environment variables Preview yang setara tetapi terpisah dari Production.
 
+### Langkah handoff Vercel
+
+1. Buka **Vercel Dashboard**, pilih **Add New → Project**, lalu import repository privat `fauzinoorsyabani/lensakeuangan` dari GitHub.
+2. Pilih framework **Vite**. Vercel akan membaca `vercel.json`; pastikan Build Command tetap `pnpm vercel:build` dan Output Directory tetap `dist/public`.
+3. Jangan menghapus rewrite pada `vercel.json`. Rewrite `/(?!api/)` mengirim route aplikasi React, seperti `/scan` dan `/review/<id>`, ke `index.html`, sementara `/api/*` tetap diteruskan ke Express Function `api/index.ts`.
+4. Isi semua environment variable Production dari [`docs/vercel-env-example.md`](docs/vercel-env-example.md), kemudian isi nilai secret sebenarnya hanya di dashboard Vercel.
+5. Deploy. Setelah selesai, buka `https://<domain-anda>/api/health` dan pastikan responsnya `{"status":"ok"}`. Lalu atur OAuth redirect URL ke `https://<domain-anda>/api/oauth/callback`.
+6. Uji login, upload struk, ekstraksi AI, review, serta approval transaksi di deployment Preview terlebih dahulu sebelum menggabungkan atau mempromosikan ke Production.
+
 Template aman untuk nama variable, scope, dan contoh nilai non-secret tersedia di [`docs/vercel-env-example.md`](docs/vercel-env-example.md). Template tersebut sengaja tidak berupa `.env` agar tidak mudah terisi atau terdorong ke Git.
 
 ### Batasan serverless yang perlu diperhatikan
