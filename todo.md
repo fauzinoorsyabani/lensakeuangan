@@ -36,6 +36,6 @@
 - [x] Menambahkan contoh variabel environment produksi tanpa menyimpan secret dan memperbarui petunjuk setup Vercel.
 - [x] Menjalankan typecheck, test, dan build deployment target Vercel untuk memverifikasi kesiapan produksi.
 - [x] Menginisialisasi repositori Git, membuat atau menggunakan repositori GitHub privat, lalu push seluruh kode siap deploy.
-- [ ] Menyiapkan handoff Vercel: import repositori, build command, output directory, rewrites, dan daftar environment production tanpa mengekspos secret.
+- [x] Menyiapkan handoff Vercel: import repositori, build command, output directory, rewrites, dan daftar environment production tanpa mengekspos secret.
 - [x] Mendokumentasikan batasan Vercel serverless dan menambahkan template environment aman yang dapat di-copy ke Project Settings tanpa memasukkan secret ke Git.
-- [ ] Menambahkan langkah handoff Vercel eksplisit dari import repositori GitHub hingga verifikasi rewrite SPA/API dan environment production.
+- [x] Menambahkan langkah handoff Vercel eksplisit dari import repositori GitHub hingga verifikasi rewrite SPA/API dan environment production.
