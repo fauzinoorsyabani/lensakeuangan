@@ -98,7 +98,7 @@ export default function ReceiptReview() {
 
   const isReviewable = status === "needs_review";
   const visibleForm = form;
-  const imageUrl = `/manus-storage/${review.data.receipt.storageKey}`;
+  const imageUrl = `/api/storage/${encodeURIComponent(review.data.receipt.storageKey).replace(/%2F/g, "/")}`;
   const inputClass = "mt-1.5 h-10 w-full rounded-lg border border-[#dfe6dc] bg-white px-3 text-sm text-[#163d32] outline-none transition focus:border-[#4d8a68] focus:ring-2 focus:ring-[#d9efdf] disabled:cursor-not-allowed disabled:bg-[#f6f7f5]";
 
   function patchItem(index: number, values: Partial<ReviewForm["items"][number]>) {

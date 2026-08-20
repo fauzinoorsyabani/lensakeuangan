@@ -114,6 +114,13 @@ export async function getReceiptForUser(userId: number, receiptId: string) {
   return result[0];
 }
 
+export async function getReceiptByStorageKeyForUser(userId: number, storageKey: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(receipts).where(and(eq(receipts.userId, userId), eq(receipts.storageKey, storageKey))).limit(1);
+  return result[0];
+}
+
 export async function createReceiptForUser(input: { id: string; userId: number; storageKey: string; fileName: string; mimeType: string }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

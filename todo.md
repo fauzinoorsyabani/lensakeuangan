@@ -30,3 +30,11 @@
 - [ ] Menyelaraskan DashboardLayout, Dashboard, Scan, Transaksi, Pengaturan, Review, login, serta komponen status ke tema monokrom.
 - [ ] Memperbarui dokumentasi palet dan audit kontras, lalu memverifikasi responsivitas, typecheck, test, dan build tema monokrom.
 - [ ] Memverifikasi tema monokrom pada state login/unauthenticated dan layar Review berisi data nyata di desktop serta mobile.
+- [x] Mengaudit error runtime/build serta memisahkan error lama dari status aplikasi saat ini.
+- [x] Menyesuaikan aset, penyimpanan gambar, dan data aplikasi agar tidak bergantung pada path atau layanan khusus Manus ketika dibangun di Vercel.
+- [x] Menambahkan konfigurasi Vercel yang sesuai untuk aplikasi React/Express dan mendokumentasikan batasan serverless, database, S3, OAuth, serta AI.
+- [x] Menambahkan contoh variabel environment produksi tanpa menyimpan secret dan memperbarui petunjuk setup Vercel.
+- [x] Menjalankan typecheck, test, dan build deployment target Vercel untuk memverifikasi kesiapan produksi.
+- [ ] Menginisialisasi repositori Git, membuat atau menggunakan repositori GitHub privat, lalu push seluruh kode siap deploy.
+- [ ] Menyiapkan handoff Vercel: import repositori, build command, output directory, rewrites, dan daftar environment production tanpa mengekspos secret.
+- [x] Mendokumentasikan batasan Vercel serverless dan menambahkan template environment aman yang dapat di-copy ke Project Settings tanpa memasukkan secret ke Git.

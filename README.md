@@ -54,3 +54,47 @@ pnpm test
 ```
 
 Test mencakup aturan transisi status receipt, validasi schema ekstraksi, kategori bawaan Indonesia, logout, dan verifikasi bahwa router meneruskan user ID sesi ke query kategori, transaksi, serta review.
+
+## Deploy ke Vercel
+
+Proyek ini menyiapkan Vercel Function pada `api/index.ts`, static output Vite pada `dist/public`, serta SPA rewrite yang **tidak** menimpa request `/api/*`. Struktur ini mengikuti pola Express export dan static asset Vercel. [1] [2]
+
+| Vercel setting | Nilai |
+|---|---|
+| Framework preset | Vite |
+| Build command | `pnpm vercel:build` |
+| Output directory | `dist/public` |
+| API entrypoint | `api/index.ts` |
+| Health check | `/api/health` |
+
+Tambahkan variabel berikut pada **Project Settings → Environment Variables** di Vercel. Nilai sensitif tidak boleh dimasukkan ke GitHub atau diekspos dengan prefix `VITE_`.
+
+| Kelompok | Variabel |
+|---|---|
+| Database dan session | `DATABASE_URL`, `JWT_SECRET` |
+| Manus OAuth yang dipakai aplikasi | `VITE_APP_ID`, `VITE_OAUTH_PORTAL_URL`, `OAUTH_SERVER_URL`, `OWNER_OPEN_ID` |
+| Ekstraksi AI server-side | `BUILT_IN_FORGE_API_URL`, `BUILT_IN_FORGE_API_KEY` |
+| Object storage portable | `STORAGE_DRIVER=s3`, `S3_BUCKET`, `S3_REGION`, `S3_ENDPOINT` (bila diperlukan), `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` |
+
+> Foto struk tetap berada di object storage. Database hanya menyimpan `storageKey`; aplikasi mengeluarkan signed URL pendek melalui endpoint terlindungi `/api/storage/*`, sehingga gambar tidak dijadikan aset publik maupun byte database.
+
+Setelah repository terhubung ke Vercel, jalankan deployment dari dashboard Vercel dan atur OAuth redirect URL ke `https://<domain-anda>/api/oauth/callback`. Untuk preview deployment, gunakan environment variables Preview yang setara tetapi terpisah dari Production.
+
+Template aman untuk nama variable, scope, dan contoh nilai non-secret tersedia di [`docs/vercel-env-example.md`](docs/vercel-env-example.md). Template tersebut sengaja tidak berupa `.env` agar tidak mudah terisi atau terdorong ke Git.
+
+### Batasan serverless yang perlu diperhatikan
+
+> Vercel menjalankan Express sebagai satu Function; static assets harus disajikan dari output/public directory, bukan bergantung pada `express.static()`. [1]
+
+Proses ekstraksi receipt berjalan dalam request `process` atau `retry`, bukan worker yang hidup permanen. Karena function dapat berhenti ketika tidak ada traffic dan memiliki batas waktu eksekusi, jangan menambahkan antrian in-memory, polling, atau background process tanpa layanan eksternal. Gunakan MySQL/TiDB untuk data relasional dan S3-compatible storage untuk gambar; filesystem function tidak dipakai sebagai penyimpanan permanen. Signed URL receipt dibatasi lima menit dan diverifikasi terhadap `userId` sebelum redirect.
+
+Model AI, database, OAuth, dan object storage semuanya memerlukan environment variable production yang valid. Tanpa `S3_*`, aplikasi tetap dapat dibangun tetapi upload receipt pada deployment Vercel sengaja akan gagal dengan pesan konfigurasi yang jelas, bukan menyimpan gambar ke filesystem atau database.
+
+## GitHub
+
+Repository dibuat privat agar kode dan konfigurasi aplikasi tidak terbuka. File `.env*`, folder `.vercel/`, dependency, log, serta build output tetap diabaikan oleh Git.
+
+## Referensi
+
+[1]: https://vercel.com/docs/frameworks/backend/express "Express on Vercel"
+[2]: https://vercel.com/docs/frameworks/frontend/vite "Vite on Vercel"
