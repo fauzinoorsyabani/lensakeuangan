@@ -103,6 +103,10 @@ Model AI, database, OAuth, dan object storage semuanya memerlukan environment va
 
 Repository dibuat privat agar kode dan konfigurasi aplikasi tidak terbuka. File `.env*`, folder `.vercel/`, dependency, log, serta build output tetap diabaikan oleh Git.
 
+## Lanjutkan di IDE Antigravity
+
+Repository dapat dibuka dan dikembangkan lebih lanjut di IDE Antigravity. Database tetap **MySQL/TiDB** melalui Drizzle ORM; koneksi diberikan melalui `DATABASE_URL`. Panduan lokal, migrasi, storage, AI, dan struktur kode tersedia di [`docs/development-antigravity.md`](docs/development-antigravity.md).
+
 ## Referensi
 
 [1]: https://vercel.com/docs/frameworks/backend/express "Express on Vercel"

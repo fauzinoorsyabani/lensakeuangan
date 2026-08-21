@@ -41,3 +41,6 @@
 - [x] Menambahkan langkah handoff Vercel eksplisit dari import repositori GitHub hingga verifikasi rewrite SPA/API dan environment production.
 - [x] Mengubah repository GitHub LensaKeuangan menjadi public, memverifikasi tidak ada secret pada riwayat kerja terbaru, dan push branch main terbaru.
 - [x] Memeriksa riwayat commit yang dipublikasikan untuk memastikan tidak ada credential atau file environment yang pernah terdorong ke GitHub.
+- [ ] Menjalankan deployment Vercel setelah project Vercel, kredensial deployment, dan environment production untuk database, OAuth, AI, serta S3 tersedia.
+- [ ] Deployment Vercel ditunda atas permintaan pengguna; lanjutkan dari repository GitHub publik di IDE Antigravity saat environment production siap.
+- [x] Menambahkan panduan pengembangan lokal untuk IDE Antigravity, MySQL/TiDB, migrasi Drizzle, dan konfigurasi storage/AI tanpa secret.
