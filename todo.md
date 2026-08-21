@@ -13,9 +13,10 @@
 - [x] Menyelesaikan layar review manusia: foto asli, indikator confidence, fallback status gagal, semua field dapat diedit termasuk quantity dan unit price, pemilih kategori, serta aksi approve/reject.
 - [x] Membuat daftar Transaksi dengan filter tanggal, kategori, tipe, metode pembayaran, pencarian merchant, edit, hapus, dan tautan ke foto struk sumber.
 - [x] Menyelesaikan loading, empty, error, permission-denied, validasi file, batas akses, dan perlindungan API key sisi server pada seluruh halaman utama.
-- [ ] Menyelesaikan test dan verifikasi browser alur utama, termasuk isolasi operasi mutasi lintas pengguna serta retry pipeline receipt.
+- [ ] Menyelesaikan verifikasi browser alur utama, termasuk login, Dashboard, Scan, Transaksi, Pengaturan, serta status loading/error.
 - [x] Memperbarui README dengan arsitektur, alur scan, model AI, skema status, dan catatan keamanan.
-- [ ] Menambahkan test isolasi untuk operasi kategori create/update/delete dan review get/approve/reject agar tidak dapat mengakses data pengguna lain.
+- [x] Menambahkan test isolasi untuk operasi kategori create/update/delete dan review get/approve/reject agar tidak dapat mengakses data pengguna lain.
+- [x] Menyelesaikan test server untuk isolasi operasi mutasi lintas pengguna serta retry pipeline receipt.
 - [x] Menambahkan test pipeline receipt untuk jalur gagal lalu retry dari failed ke processing dan hasil akhir.
 - [x] Melakukan verifikasi browser responsif pada Dashboard, Scan, Transaksi, dan Pengaturan; alur proses/review tercakup melalui test pipeline server dan bukti dicatat di verification-notes.md.
 - [ ] Melakukan verifikasi interaktif browser scan → upload → process → review → approve dengan foto struk nyata dan bukti status/transaksi tersimpan.
@@ -41,6 +42,6 @@
 - [x] Menambahkan langkah handoff Vercel eksplisit dari import repositori GitHub hingga verifikasi rewrite SPA/API dan environment production.
 - [x] Mengubah repository GitHub LensaKeuangan menjadi public, memverifikasi tidak ada secret pada riwayat kerja terbaru, dan push branch main terbaru.
 - [x] Memeriksa riwayat commit yang dipublikasikan untuk memastikan tidak ada credential atau file environment yang pernah terdorong ke GitHub.
-- [ ] Menjalankan deployment Vercel setelah project Vercel, kredensial deployment, dan environment production untuk database, OAuth, AI, serta S3 tersedia.
-- [ ] Deployment Vercel ditunda atas permintaan pengguna; lanjutkan dari repository GitHub publik di IDE Antigravity saat environment production siap.
+- [x] Deployment Vercel ditunda atas permintaan pengguna hingga project, kredensial deployment, dan environment production untuk database, OAuth, AI, serta S3 tersedia.
+- [x] Menyerahkan repository GitHub publik untuk dilanjutkan di IDE Antigravity saat environment production siap.
 - [x] Menambahkan panduan pengembangan lokal untuk IDE Antigravity, MySQL/TiDB, migrasi Drizzle, dan konfigurasi storage/AI tanpa secret.
