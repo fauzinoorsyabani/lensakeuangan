@@ -14,10 +14,10 @@ type ReviewForm = { categoryId: number | null; type: "expense" | "income"; merch
 
 const methodLabels: Record<PaymentMethod, string> = { cash: "Tunai", debit: "Kartu debit", credit: "Kartu kredit", ewallet: "E-wallet", bank_transfer: "Transfer bank", other: "Lainnya" };
 const numericString = (value: number | null | undefined) => value === null || value === undefined ? "" : String(value);
-const confidenceTone = (value: number) => value >= 0.8 ? "bg-[#e2f3e3] text-[#247247]" : value >= 0.55 ? "bg-[#fff2d9] text-[#9a6615]" : "bg-[#fff0eb] text-[#bf4938]";
+const confidenceTone = (value: number) => value >= 0.8 ? "bg-white/15 text-white" : value >= 0.55 ? "bg-white/10 text-[var(--ai-mint)]" : "bg-white/5 text-[var(--ai-muted)]";
 
 function StatusBadge({ status }: { status: string }) {
-  const tone = status === "needs_review" ? "bg-[#fff2d9] text-[#9a6615]" : status === "failed" ? "bg-[#fff0eb] text-[#bf4938]" : "bg-[#e2f3e3] text-[#247247]";
+  const tone = status === "needs_review" ? "bg-white/15 text-white" : status === "failed" ? "bg-white/5 text-[var(--ai-mint)]" : "bg-white/10 text-white";
   const Icon = status === "needs_review" ? CircleAlert : status === "failed" ? XCircle : CheckCircle2;
   return <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-xs font-bold ${tone}`}><Icon className="h-4 w-4" />{status.replaceAll("_", " ")}</span>;
 }
@@ -88,7 +88,7 @@ export default function ReceiptReview() {
     }
   }
 
-  if (review.isLoading) return <div className="grid min-h-[48vh] place-items-center"><LoaderCircle className="h-7 w-7 animate-spin text-[#207047]" /></div>;
+  if (review.isLoading) return <div className="grid min-h-[48vh] place-items-center"><LoaderCircle className="h-7 w-7 animate-spin text-white" /></div>;
   if (review.error || !review.data) return <FailureCard title="Review struk tidak dapat dimuat." description="Silakan kembali ke halaman scan dan pilih struk lain." actionLabel="Kembali ke Scan" onAction={() => setLocation("/scan")} />;
 
   const status = review.data.receipt.status;
@@ -99,7 +99,7 @@ export default function ReceiptReview() {
   const isReviewable = status === "needs_review";
   const visibleForm = form;
   const imageUrl = `/api/storage/${encodeURIComponent(review.data.receipt.storageKey).replace(/%2F/g, "/")}`;
-  const inputClass = "mt-1.5 h-10 w-full rounded-lg border border-[#dfe6dc] bg-white px-3 text-sm text-[#163d32] outline-none transition focus:border-[#4d8a68] focus:ring-2 focus:ring-[#d9efdf] disabled:cursor-not-allowed disabled:bg-[#f6f7f5]";
+  const inputClass = "mt-1.5 h-10 w-full rounded-lg border border-white/20 bg-black/40 px-3 text-sm text-white outline-none transition focus:border-white/50 focus:ring-2 focus:ring-white/15 disabled:cursor-not-allowed disabled:bg-white/5";
 
   function patchItem(index: number, values: Partial<ReviewForm["items"][number]>) {
     const items = [...visibleForm.items];
@@ -111,12 +111,12 @@ export default function ReceiptReview() {
     <div className="ai-review-workbench animate-in fade-in duration-500">
       <ReviewHeader status={status} onBack={() => setLocation("/scan")} />
       <section className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <article className="ai-review-source overflow-hidden rounded-[1.5rem] border border-[#e3e8e0] bg-white p-4 shadow-[0_10px_30px_rgba(45,69,57,0.05)]">
-          <div className="relative overflow-hidden rounded-xl bg-[#eef2ed]"><img src={imageUrl} alt={`Struk ${review.data.receipt.fileName}`} className="max-h-[650px] w-full object-contain" /></div>
-          <div className="mt-4 flex items-center justify-between text-xs text-[#77837c]"><span className="truncate pr-4">{review.data.receipt.fileName}</span><span className={`ai-confidence rounded-full px-2 py-1 text-[10px] font-bold ${confidenceTone(extraction.confidence.overall)}`}>Keyakinan {Math.round(extraction.confidence.overall * 100)}%</span></div>
+        <article className="ai-review-source overflow-hidden rounded-[1.5rem] border border-white/20 bg-[var(--ai-panel)] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+          <div className="relative overflow-hidden rounded-xl bg-black/40"><img src={imageUrl} alt={`Struk ${review.data.receipt.fileName}`} className="max-h-[650px] w-full object-contain" /></div>
+          <div className="mt-4 flex items-center justify-between text-xs text-[var(--ai-muted)]"><span className="truncate pr-4">{review.data.receipt.fileName}</span><span className={`ai-confidence rounded-full px-2 py-1 text-[10px] font-bold ${confidenceTone(extraction.confidence.overall)}`}>Keyakinan {Math.round(extraction.confidence.overall * 100)}%</span></div>
         </article>
-        <article className="ai-review-draft rounded-[1.5rem] border border-[#e3e8e0] bg-white p-5 shadow-[0_10px_30px_rgba(45,69,57,0.05)] lg:p-6">
-          <div className="flex items-start justify-between"><div><p className="font-display text-lg font-bold">Detail transaksi</p><p className="mt-1 text-xs text-[#7a867e]">Ubah setiap field yang tidak sesuai dengan struk.</p></div><span className={`ai-confidence rounded-lg px-2.5 py-1.5 text-[10px] font-bold ${confidenceTone(extraction.confidence.overall)}`}>AI {Math.round(extraction.confidence.overall * 100)}%</span></div>
+        <article className="ai-review-draft rounded-[1.5rem] border border-white/20 bg-[var(--ai-panel)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] lg:p-6">
+          <div className="flex items-start justify-between"><div><p className="font-display text-lg font-bold">Detail transaksi</p><p className="mt-1 text-xs text-[var(--ai-muted)]">Ubah setiap field yang tidak sesuai dengan struk.</p></div><span className={`ai-confidence rounded-lg px-2.5 py-1.5 text-[10px] font-bold ${confidenceTone(extraction.confidence.overall)}`}>AI {Math.round(extraction.confidence.overall * 100)}%</span></div>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <Field label="Merchant" confidence={extraction.confidence.merchantName}><input value={form.merchant} disabled={!isReviewable} onChange={(event) => patch({ merchant: event.target.value })} className={inputClass} /></Field>
             <Field label="Tanggal" confidence={extraction.confidence.date}><input type="date" value={form.occurredAt} disabled={!isReviewable} onChange={(event) => patch({ occurredAt: event.target.value })} className={inputClass} /></Field>
@@ -129,9 +129,9 @@ export default function ReceiptReview() {
             <Field label="Diskon"><input inputMode="decimal" value={form.discount} disabled={!isReviewable} onChange={(event) => patch({ discount: event.target.value })} className={inputClass} /></Field>
             <Field label="Mata uang"><input value={form.currency} maxLength={3} disabled={!isReviewable} onChange={(event) => patch({ currency: event.target.value.toUpperCase() })} className={inputClass} /></Field>
           </div>
-          <label className="mt-4 block"><span className="text-xs font-bold text-[#5f7066]">Catatan</span><textarea value={form.notes} disabled={!isReviewable} onChange={(event) => patch({ notes: event.target.value })} className={`${inputClass} h-20 py-2`} /></label>
-          <div className="mt-5 border-t border-[#edf0eb] pt-5"><p className="text-sm font-bold">Item belanja</p><p className="mt-1 text-xs text-[#8a968d]">Setiap nama, jumlah, harga satuan, dan total dapat dikoreksi.</p><div className="mt-3 space-y-2">{form.items.length ? form.items.map((item, index) => <div key={index} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_74px_94px_94px]"><input placeholder="Nama item" value={item.name} disabled={!isReviewable} onChange={(event) => patchItem(index, { name: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /><input placeholder="Jml" inputMode="decimal" value={item.quantity} disabled={!isReviewable} onChange={(event) => patchItem(index, { quantity: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /><input placeholder="Satuan" inputMode="decimal" value={item.unitPrice} disabled={!isReviewable} onChange={(event) => patchItem(index, { unitPrice: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /><input placeholder="Total" inputMode="decimal" value={item.total} disabled={!isReviewable} onChange={(event) => patchItem(index, { total: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /></div>) : <p className="text-xs text-[#89948c]">Tidak ada item yang dapat dibaca dari struk ini.</p>}</div></div>
-          {isReviewable ? <div className="mt-6 flex flex-col-reverse gap-3 border-t border-[#edf0eb] pt-5 sm:flex-row sm:justify-between"><button onClick={rejectReceipt} disabled={reject.isPending} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#f0c6bb] px-4 text-xs font-bold text-[#c14c39] hover:bg-[#fff7f4]"><RotateCcw className="h-4 w-4" />Tolak hasil</button><button onClick={submitApproval} disabled={approve.isPending} className="ai-primary inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#163d32] px-5 text-xs font-bold text-white hover:bg-[#245143] disabled:opacity-60">{approve.isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Setujui transaksi</button></div> : null}
+          <label className="mt-4 block"><span className="text-xs font-bold text-[var(--ai-mint)]">Catatan</span><textarea value={form.notes} disabled={!isReviewable} onChange={(event) => patch({ notes: event.target.value })} className={`${inputClass} h-20 py-2`} /></label>
+          <div className="mt-5 border-t border-white/15 pt-5"><p className="text-sm font-bold">Item belanja</p><p className="mt-1 text-xs text-[var(--ai-muted)]">Setiap nama, jumlah, harga satuan, dan total dapat dikoreksi.</p><div className="mt-3 space-y-2">{form.items.length ? form.items.map((item, index) => <div key={index} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_74px_94px_94px]"><input placeholder="Nama item" value={item.name} disabled={!isReviewable} onChange={(event) => patchItem(index, { name: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /><input placeholder="Jml" inputMode="decimal" value={item.quantity} disabled={!isReviewable} onChange={(event) => patchItem(index, { quantity: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /><input placeholder="Satuan" inputMode="decimal" value={item.unitPrice} disabled={!isReviewable} onChange={(event) => patchItem(index, { unitPrice: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /><input placeholder="Total" inputMode="decimal" value={item.total} disabled={!isReviewable} onChange={(event) => patchItem(index, { total: event.target.value })} className={inputClass.replace("mt-1.5 ", "")} /></div>) : <p className="text-xs text-[var(--ai-muted)]">Tidak ada item yang dapat dibaca dari struk ini.</p>}</div></div>
+          {isReviewable ? <div className="mt-6 flex flex-col-reverse gap-3 border-t border-white/15 pt-5 sm:flex-row sm:justify-between"><button onClick={rejectReceipt} disabled={reject.isPending} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/25 px-4 text-xs font-bold text-white hover:bg-white/10"><RotateCcw className="h-4 w-4" />Tolak hasil</button><button onClick={submitApproval} disabled={approve.isPending} className="ai-primary inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-xs font-bold disabled:opacity-60">{approve.isPending ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Setujui transaksi</button></div> : null}
         </article>
       </section>
     </div>
@@ -139,13 +139,13 @@ export default function ReceiptReview() {
 }
 
 function ReviewHeader({ status, onBack }: { status: string; onBack: () => void }) {
-  return <><button onClick={onBack} className="inline-flex items-center gap-2 text-xs font-bold text-[#688078] hover:text-[#163d32]"><ArrowLeft className="h-4 w-4" />Kembali ke Scan</button><div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#e85d48]">Review hasil AI</p><h1 className="mt-2 font-display text-3xl font-bold tracking-tight">Periksa sebelum dicatat.</h1><p className="mt-2 text-sm text-[#718078]">AI memberi draf; Anda yang memegang keputusan final.</p></div><StatusBadge status={status} /></div></>;
+  return <><button onClick={onBack} className="inline-flex items-center gap-2 text-xs font-bold text-[var(--ai-muted)] hover:text-white"><ArrowLeft className="h-4 w-4" />Kembali ke Scan</button><div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--ai-muted)]">Review hasil AI</p><h1 className="mt-2 font-display text-3xl font-bold tracking-tight">Periksa sebelum dicatat.</h1><p className="mt-2 text-sm text-[var(--ai-muted)]">AI memberi draf; Anda yang memegang keputusan final.</p></div><StatusBadge status={status} /></div></>;
 }
 
 function FailureCard({ title, description, actionLabel, onAction, loading = false }: { title: string; description: string; actionLabel: string; onAction: () => void; loading?: boolean }) {
-  return <section className="mt-6 rounded-2xl border border-[#f4d8cc] bg-[#fff9f6] p-5"><p className="text-sm font-bold text-[#7a3d30]">{title}</p><p className="mt-1 text-xs leading-5 text-[#91655b]">{description}</p><button onClick={onAction} disabled={loading} className="mt-4 inline-flex h-10 items-center gap-2 rounded-xl bg-[#e85d48] px-4 text-xs font-bold text-white disabled:opacity-60"><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />{actionLabel}</button></section>;
+  return <section className="mt-6 rounded-2xl border border-white/20 bg-[var(--ai-panel)] p-5"><p className="text-sm font-bold text-white">{title}</p><p className="mt-1 text-xs leading-5 text-[var(--ai-muted)]">{description}</p><button onClick={onAction} disabled={loading} className="ai-primary mt-4 inline-flex h-10 items-center gap-2 rounded-xl px-4 text-xs font-bold disabled:opacity-60"><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />{actionLabel}</button></section>;
 }
 
 function Field({ label, confidence, children }: { label: string; confidence?: number; children: React.ReactNode }) {
-  return <label className="block"><span className="flex items-center gap-2 text-xs font-bold text-[#5f7066]">{label}{confidence !== undefined ? <i className={`h-1.5 w-1.5 rounded-full ${confidence >= 0.8 ? "bg-[#36a15d]" : confidence >= 0.55 ? "bg-[#e2a83a]" : "bg-[#e85d48]"}`} /> : null}</span>{children}</label>;
+  return <label className="block"><span className="flex items-center gap-2 text-xs font-bold text-[var(--ai-mint)]">{label}{confidence !== undefined ? <i className={`h-1.5 w-1.5 rounded-full ${confidence >= 0.8 ? "bg-white" : confidence >= 0.55 ? "bg-white/60" : "bg-white/30"}`} /> : null}</span>{children}</label>;
 }

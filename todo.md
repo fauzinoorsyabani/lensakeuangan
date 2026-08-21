@@ -26,9 +26,9 @@
 - [x] Menambahkan aksen AI-native spesifik pada Transactions, Pengaturan, dan ReceiptReview serta memverifikasi route Review pada desktop dan mobile.
 - [x] Menerapkan workbench Aurora Neural secara eksplisit di halaman Transaksi dan mendokumentasikan perubahannya.
 - [ ] Memverifikasi layar Review berisi data dengan foto struk nyata saat tersedia; sementara itu, nyatakan cakupan verifikasi fallback secara akurat.
-- [ ] Memverifikasi tema Aurora Neural pada state login/unauthenticated dan mencatat audit kontras, sebelum sistem tersebut digantikan oleh tema monokrom.
+- [x] Menutup verifikasi tema Aurora Neural karena sistem tersebut telah disupersesi oleh keputusan pengguna untuk memakai Obsidian Canvas monokrom.
 - [x] Mengganti sistem Aurora Neural menjadi palet monokrom hitam-putih dengan token semantik tanpa aksen warna.
-- [ ] Menyelaraskan DashboardLayout, Dashboard, Scan, Transaksi, Pengaturan, Review, login, serta komponen status ke tema monokrom.
+- [x] Menyelaraskan DashboardLayout, Dashboard, Scan, Transaksi, Pengaturan, Review fallback, login, serta komponen status ke tema monokrom.
 - [x] Memperbarui dokumentasi palet dan audit kontras, lalu memverifikasi responsivitas, typecheck, test, dan build tema monokrom.
 - [ ] Memverifikasi tema monokrom pada state login/unauthenticated dan layar Review berisi data nyata di desktop serta mobile.
 - [x] Mengaudit error runtime/build serta memisahkan error lama dari status aplikasi saat ini.
@@ -44,5 +44,6 @@
 - [x] Memeriksa riwayat commit yang dipublikasikan untuk memastikan tidak ada credential atau file environment yang pernah terdorong ke GitHub.
 - [x] Deployment Vercel ditunda atas permintaan pengguna hingga project, kredensial deployment, dan environment production untuk database, OAuth, AI, serta S3 tersedia.
 - [x] Menyerahkan repository GitHub publik untuk dilanjutkan di IDE Antigravity saat environment production siap.
-- [ ] Memverifikasi state login/unauthenticated, Review fallback, dan komponen status pada tema monokrom lalu mencatat hasilnya.
+- [x] Memverifikasi state login/unauthenticated dan Review fallback pada tema monokrom lalu mencatat hasilnya.
+- [x] Memverifikasi kontrak komponen status receipt utama pada tema monokrom melalui test loading, failed, needs_review, approved, confidence, dan aksi pemulihan; verifikasi receipt dengan data nyata tetap terpisah.
 - [x] Menambahkan panduan pengembangan lokal untuk IDE Antigravity, MySQL/TiDB, migrasi Drizzle, dan konfigurasi storage/AI tanpa secret.
