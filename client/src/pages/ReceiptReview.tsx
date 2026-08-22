@@ -14,6 +14,7 @@ type ReviewForm = { categoryId: number | null; type: "expense" | "income"; merch
 
 const methodLabels: Record<PaymentMethod, string> = { cash: "Tunai", debit: "Kartu debit", credit: "Kartu kredit", ewallet: "E-wallet", bank_transfer: "Transfer bank", other: "Lainnya" };
 const numericString = (value: number | null | undefined) => value === null || value === undefined ? "" : String(value);
+const storedNumberString = (value: string | number | null | undefined) => value === null || value === undefined ? "" : String(value);
 const confidenceTone = (value: number) => value >= 0.8 ? "bg-white/15 text-white" : value >= 0.55 ? "bg-white/10 text-[var(--ai-mint)]" : "bg-white/5 text-[var(--ai-muted)]";
 
 function StatusBadge({ status }: { status: string }) {
@@ -27,25 +28,37 @@ export default function ReceiptReview() {
   const receiptId = params?.id ?? "";
   const [, setLocation] = useLocation();
   const utils = trpc.useUtils();
-  const review = trpc.review.get.useQuery({ id: receiptId }, { enabled: Boolean(receiptId) });
-  const categories = trpc.categories.list.useQuery();
+  const review = trpc.review.get.useQuery({ id: receiptId }, { enabled: Boolean(receiptId), retry: false, refetchOnWindowFocus: false });
+  const categories = trpc.categories.list.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
+  const image = trpc.receipts.imageUrl.useQuery({ id: receiptId }, { enabled: Boolean(review.data?.receipt.storageKey), retry: false, refetchOnWindowFocus: false });
   const retry = trpc.receipts.retry.useMutation();
   const approve = trpc.review.approve.useMutation();
   const reject = trpc.review.reject.useMutation();
   const [form, setForm] = useState<ReviewForm | null>(null);
+  const [reviewTimedOut, setReviewTimedOut] = useState(false);
+
+  useEffect(() => {
+    if (!review.isLoading) {
+      setReviewTimedOut(false);
+      return;
+    }
+    const timeout = window.setTimeout(() => setReviewTimedOut(true), 10_000);
+    return () => window.clearTimeout(timeout);
+  }, [review.isLoading]);
 
   useEffect(() => {
     const extraction = review.data?.extraction?.resultJson as Extraction | undefined;
     if (!review.data || !extraction) return;
     const suggestedCategory = categories.data?.find((category) => category.name.toLowerCase() === extraction.category?.toLowerCase());
+    const transaction = review.data.transaction;
     setForm({
-      categoryId: suggestedCategory?.id ?? null,
-      type: "expense",
-      merchant: extraction.merchantName ?? "",
-      occurredAt: extraction.date ?? new Date().toISOString().slice(0, 10),
-      total: numericString(extraction.total), subtotal: numericString(extraction.subtotal), tax: numericString(extraction.tax), discount: numericString(extraction.discount),
-      currency: extraction.currency || "IDR", paymentMethod: extraction.paymentMethod, notes: extraction.notes ?? "",
-      items: extraction.lineItems.map((item) => ({ name: item.name, quantity: numericString(item.quantity), unitPrice: numericString(item.unitPrice), total: numericString(item.total) })),
+      categoryId: transaction?.categoryId ?? suggestedCategory?.id ?? null,
+      type: transaction?.type ?? "expense",
+      merchant: transaction?.merchant ?? extraction.merchantName ?? "",
+      occurredAt: transaction?.occurredAt ? new Date(transaction.occurredAt).toISOString().slice(0, 10) : extraction.date ?? new Date().toISOString().slice(0, 10),
+      total: storedNumberString(transaction?.total ?? extraction.total), subtotal: storedNumberString(transaction?.subtotal ?? extraction.subtotal), tax: storedNumberString(transaction?.tax ?? extraction.tax), discount: storedNumberString(transaction?.discount ?? extraction.discount),
+      currency: transaction?.currency || extraction.currency || "IDR", paymentMethod: transaction?.paymentMethod ?? extraction.paymentMethod, notes: transaction?.notes ?? extraction.notes ?? "",
+      items: (review.data.items.length ? review.data.items : extraction.lineItems).map((item) => ({ name: item.name, quantity: storedNumberString(item.quantity), unitPrice: storedNumberString(item.unitPrice), total: storedNumberString(item.total) })),
     });
   }, [review.data, categories.data]);
 
@@ -88,8 +101,8 @@ export default function ReceiptReview() {
     }
   }
 
-  if (review.isLoading) return <div className="grid min-h-[48vh] place-items-center"><LoaderCircle className="h-7 w-7 animate-spin text-white" /></div>;
-  if (review.error || !review.data) return <FailureCard title="Review struk tidak dapat dimuat." description="Silakan kembali ke halaman scan dan pilih struk lain." actionLabel="Kembali ke Scan" onAction={() => setLocation("/scan")} />;
+  if (review.isLoading && !review.error && !reviewTimedOut) return <div className="grid min-h-[48vh] place-items-center"><LoaderCircle className="h-7 w-7 animate-spin text-white" /></div>;
+  if (review.isError || !review.data || reviewTimedOut) return <FailureCard title="Review struk tidak dapat dimuat." description={reviewTimedOut ? "Pemuatan terlalu lama. Coba muat ulang review atau kembali ke halaman scan." : review.error?.message || "Silakan kembali ke halaman scan dan pilih struk lain."} actionLabel={reviewTimedOut ? "Muat ulang Review" : "Kembali ke Scan"} onAction={reviewTimedOut ? () => { setReviewTimedOut(false); void review.refetch(); } : () => setLocation("/scan")} />;
 
   const status = review.data.receipt.status;
   const extraction = review.data.extraction?.resultJson as Extraction | undefined;
@@ -98,7 +111,7 @@ export default function ReceiptReview() {
 
   const isReviewable = status === "needs_review";
   const visibleForm = form;
-  const imageUrl = `/api/storage/${encodeURIComponent(review.data.receipt.storageKey).replace(/%2F/g, "/")}`;
+  const imageUrl = image.data?.url;
   const inputClass = "mt-1.5 h-10 w-full rounded-lg border border-white/20 bg-black/40 px-3 text-sm text-white outline-none transition focus:border-white/50 focus:ring-2 focus:ring-white/15 disabled:cursor-not-allowed disabled:bg-white/5";
 
   function patchItem(index: number, values: Partial<ReviewForm["items"][number]>) {
@@ -112,7 +125,7 @@ export default function ReceiptReview() {
       <ReviewHeader status={status} onBack={() => setLocation("/scan")} />
       <section className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <article className="ai-review-source overflow-hidden rounded-[1.5rem] border border-white/20 bg-[var(--ai-panel)] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-          <div className="relative overflow-hidden rounded-xl bg-black/40"><img src={imageUrl} alt={`Struk ${review.data.receipt.fileName}`} className="max-h-[650px] w-full object-contain" /></div>
+          <div className="relative grid min-h-[360px] place-items-center overflow-hidden rounded-xl bg-black/40">{imageUrl ? <img src={imageUrl} alt={`Struk ${review.data.receipt.fileName}`} className="max-h-[650px] w-full object-contain" /> : <span className="text-xs text-[var(--ai-muted)]">Memuat foto struk…</span>}</div>
           <div className="mt-4 flex items-center justify-between text-xs text-[var(--ai-muted)]"><span className="truncate pr-4">{review.data.receipt.fileName}</span><span className={`ai-confidence rounded-full px-2 py-1 text-[10px] font-bold ${confidenceTone(extraction.confidence.overall)}`}>Keyakinan {Math.round(extraction.confidence.overall * 100)}%</span></div>
         </article>
         <article className="ai-review-draft rounded-[1.5rem] border border-white/20 bg-[var(--ai-panel)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] lg:p-6">

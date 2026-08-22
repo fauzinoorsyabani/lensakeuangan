@@ -22,4 +22,10 @@ describe("ReceiptReview monokrom status contract", () => {
     expect(source).toContain('className="ai-primary mt-4');
     expect(source).toContain('border border-white/20 bg-[var(--ai-panel)]');
   });
+
+  it("offers recovery instead of an indefinite Review loading state", () => {
+    expect(source).toContain("window.setTimeout(() => setReviewTimedOut(true), 10_000)");
+    expect(source).toContain('"Muat ulang Review"');
+    expect(source).toContain("void review.refetch()");
+  });
 });

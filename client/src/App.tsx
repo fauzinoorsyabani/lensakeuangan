@@ -18,11 +18,11 @@ function ProtectedPage({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
-      <Route path="/"><ProtectedPage><Home /></ProtectedPage></Route>
       <Route path="/scan"><ProtectedPage><Scan /></ProtectedPage></Route>
       <Route path="/review/:id"><ProtectedPage><ReceiptReview /></ProtectedPage></Route>
       <Route path="/transaksi"><ProtectedPage><Transactions /></ProtectedPage></Route>
       <Route path="/pengaturan"><ProtectedPage><Settings /></ProtectedPage></Route>
+      <Route path="/"><ProtectedPage><Home /></ProtectedPage></Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

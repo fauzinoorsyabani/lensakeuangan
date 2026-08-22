@@ -25,7 +25,7 @@
 - [x] Memverifikasi ulang kontras, responsivitas, typecheck, test, dan build setelah perbaikan visual AI-native.
 - [x] Menambahkan aksen AI-native spesifik pada Transactions, Pengaturan, dan ReceiptReview serta memverifikasi route Review pada desktop dan mobile.
 - [x] Menerapkan workbench Aurora Neural secara eksplisit di halaman Transaksi dan mendokumentasikan perubahannya.
-- [ ] Memverifikasi layar Review berisi data dengan foto struk nyata saat tersedia; sementara itu, nyatakan cakupan verifikasi fallback secara akurat.
+- [ ] Memverifikasi layar Review berisi data dengan struk nyata dan mencatat hasil ekstraksi serta approval transaksi.
 - [x] Menutup verifikasi tema Aurora Neural karena sistem tersebut telah disupersesi oleh keputusan pengguna untuk memakai Obsidian Canvas monokrom.
 - [x] Mengganti sistem Aurora Neural menjadi palet monokrom hitam-putih dengan token semantik tanpa aksen warna.
 - [x] Menyelaraskan DashboardLayout, Dashboard, Scan, Transaksi, Pengaturan, Review fallback, login, serta komponen status ke tema monokrom.
@@ -47,3 +47,10 @@
 - [x] Memverifikasi state login/unauthenticated dan Review fallback pada tema monokrom lalu mencatat hasilnya.
 - [x] Memverifikasi kontrak komponen status receipt utama pada tema monokrom melalui test loading, failed, needs_review, approved, confidence, dan aksi pemulihan; verifikasi receipt dengan data nyata tetap terpisah.
 - [x] Menambahkan panduan pengembangan lokal untuk IDE Antigravity, MySQL/TiDB, migrasi Drizzle, dan konfigurasi storage/AI tanpa secret.
+- [x] Menggunakan struk pengguna yang diberikan untuk memverifikasi upload, ekstraksi AI, approval, dan transaksi tersimpan dari awal hingga akhir melalui alur backend yang sama.
+- [ ] Memverifikasi review editable melalui browser dengan mengubah merchant, kategori, atau item sebelum approval lalu memastikan perubahan tersimpan.
+- [x] Memverifikasi perubahan field review melalui draft backend terpisah: merchant diubah sebelum approval dan tersimpan sebagai transaksi baru tanpa mengubah transaksi awal.
+- [ ] Memperbaiki loop autentikasi preview dan state loading Review agar query protected yang gagal menampilkan error yang dapat dipulihkan, bukan spinner tanpa akhir.
+- [x] Memperbaiki urutan route agar Dashboard tidak menangkap URL Scan, Transaksi, Pengaturan, dan Review sebelum halaman tujuan dirender.
+- [ ] Memperbaiki Review approved agar kategori transaksi tersimpan digunakan sebagai nilai form dan gambar receipt sumber dapat ditampilkan melalui proxy terproteksi.
+- [ ] Membuat draft receipt `needs_review` terpisah dari struk pengguna, mengubah field review, menyetujui draft, dan memverifikasi perubahan transaksi tersimpan tanpa mengubah transaksi awal.

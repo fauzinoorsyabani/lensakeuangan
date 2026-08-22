@@ -9,6 +9,7 @@ import { startLogin } from "./const";
 import "./index.css";
 
 const queryClient = new QueryClient();
+let loginRedirectInFlight = false;
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
@@ -16,9 +17,10 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
 
-  if (!isUnauthorized) return;
+  if (!isUnauthorized || loginRedirectInFlight) return;
 
-  startLogin();
+  loginRedirectInFlight = true;
+  window.setTimeout(() => startLogin(), 0);
 };
 
 queryClient.getQueryCache().subscribe(event => {

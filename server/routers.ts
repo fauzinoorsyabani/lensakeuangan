@@ -7,6 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import * as db from "./db";
 import { paymentMethods, transactionTypes } from "../drizzle/schema";
 import { processReceiptWithAI } from "./receiptExtraction";
+import { storageGetSignedUrl } from "./storage";
 
 const transactionPatch = z.object({
   categoryId: z.number().int().positive().nullable().optional(),
@@ -61,6 +62,11 @@ export const appRouter = router({
   receipts: router({
     list: protectedProcedure.query(({ ctx }) => db.listReceiptsForUser(ctx.user.id)),
     get: protectedProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ ctx, input }) => db.getReceiptForUser(ctx.user.id, input.id) ?? notFound("Struk tidak ditemukan")),
+    imageUrl: protectedProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ ctx, input }) => {
+      const receipt = await db.getReceiptForUser(ctx.user.id, input.id);
+      if (!receipt) notFound("Struk tidak ditemukan");
+      return { url: await storageGetSignedUrl(receipt.storageKey) };
+    }),
     process: protectedProcedure.input(z.object({ id: z.string().uuid() })).mutation(async ({ ctx, input }) => {
       const receipt = await db.getReceiptForUser(ctx.user.id, input.id);
       if (!receipt) notFound("Struk tidak ditemukan");
