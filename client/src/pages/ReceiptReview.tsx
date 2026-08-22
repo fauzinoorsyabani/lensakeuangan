@@ -1,8 +1,10 @@
 import { ArrowLeft, CheckCircle2, CircleAlert, LoaderCircle, RefreshCw, RotateCcw, Save, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useLocation, useRoute } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { transitionReceiptImageState, type ReceiptImageState } from "@/lib/receiptImageState";
+import { COOKIE_NAME } from "@shared/const";
 
 type PaymentMethod = "cash" | "debit" | "credit" | "ewallet" | "bank_transfer" | "other";
 type Extraction = {
@@ -17,6 +19,18 @@ const numericString = (value: number | null | undefined) => value === null || va
 const storedNumberString = (value: string | number | null | undefined) => value === null || value === undefined ? "" : String(value);
 const confidenceTone = (value: number) => value >= 0.8 ? "bg-white/15 text-white" : value >= 0.55 ? "bg-white/10 text-[var(--ai-mint)]" : "bg-white/5 text-[var(--ai-muted)]";
 
+function getPreviewAuthHeaders(): Record<string, string> {
+  try {
+    const raw = sessionStorage.getItem("manus-cookie");
+    const prefix = `${COOKIE_NAME}=`;
+    const pair = raw?.split(";").find((entry) => entry.trim().startsWith(prefix));
+    const token = pair?.trim().slice(prefix.length);
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 function StatusBadge({ status }: { status: string }) {
   const tone = status === "needs_review" ? "bg-white/15 text-white" : status === "failed" ? "bg-white/5 text-[var(--ai-mint)]" : "bg-white/10 text-white";
   const Icon = status === "needs_review" ? CircleAlert : status === "failed" ? XCircle : CheckCircle2;
@@ -30,12 +44,17 @@ export default function ReceiptReview() {
   const utils = trpc.useUtils();
   const review = trpc.review.get.useQuery({ id: receiptId }, { enabled: Boolean(receiptId), retry: false, refetchOnWindowFocus: false });
   const categories = trpc.categories.list.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
-  const image = trpc.receipts.imageUrl.useQuery({ id: receiptId }, { enabled: Boolean(review.data?.receipt.storageKey), retry: false, refetchOnWindowFocus: false });
   const retry = trpc.receipts.retry.useMutation();
   const approve = trpc.review.approve.useMutation();
   const reject = trpc.review.reject.useMutation();
   const [form, setForm] = useState<ReviewForm | null>(null);
   const [reviewTimedOut, setReviewTimedOut] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = useState(false);
+  const [imageState, setImageState] = useState<ReceiptImageState>("loading");
+  const reviewImageUrl = review.data?.receipt.storageKey
+    ? `/api/storage/${review.data.receipt.storageKey.split("/").map(encodeURIComponent).join("/")}`
+    : null;
 
   useEffect(() => {
     if (!review.isLoading) {
@@ -61,6 +80,42 @@ export default function ReceiptReview() {
       items: (review.data.items.length ? review.data.items : extraction.lineItems).map((item) => ({ name: item.name, quantity: storedNumberString(item.quantity), unitPrice: storedNumberString(item.unitPrice), total: storedNumberString(item.total) })),
     });
   }, [review.data, categories.data]);
+
+  useEffect(() => {
+    if (!reviewImageUrl) {
+      setImageSrc(null);
+      setImageLoadError(false);
+      setImageState((state) => transitionReceiptImageState(state, "reset"));
+      return;
+    }
+
+    let objectUrl: string | null = null;
+    let active = true;
+    setImageSrc(null);
+    setImageLoadError(false);
+    setImageState((state) => transitionReceiptImageState(state, "reset"));
+
+    void fetch(reviewImageUrl, { credentials: "include", headers: getPreviewAuthHeaders() })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Foto struk tidak dapat dimuat (${response.status})`);
+        return response.blob();
+      })
+      .then((image) => {
+        objectUrl = URL.createObjectURL(image);
+        if (active) setImageSrc(objectUrl);
+      })
+      .catch(() => {
+        if (active) {
+          setImageLoadError(true);
+          setImageState((state) => transitionReceiptImageState(state, "error"));
+        }
+      });
+
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [reviewImageUrl]);
 
   const patch = (values: Partial<ReviewForm>) => setForm((current) => current ? { ...current, ...values } : current);
 
@@ -111,7 +166,6 @@ export default function ReceiptReview() {
 
   const isReviewable = status === "needs_review";
   const visibleForm = form;
-  const imageUrl = image.data?.url;
   const inputClass = "mt-1.5 h-10 w-full rounded-lg border border-white/20 bg-black/40 px-3 text-sm text-white outline-none transition focus:border-white/50 focus:ring-2 focus:ring-white/15 disabled:cursor-not-allowed disabled:bg-white/5";
 
   function patchItem(index: number, values: Partial<ReviewForm["items"][number]>) {
@@ -125,7 +179,7 @@ export default function ReceiptReview() {
       <ReviewHeader status={status} onBack={() => setLocation("/scan")} />
       <section className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <article className="ai-review-source overflow-hidden rounded-[1.5rem] border border-white/20 bg-[var(--ai-panel)] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-          <div className="relative grid min-h-[360px] place-items-center overflow-hidden rounded-xl bg-black/40">{imageUrl ? <img src={imageUrl} alt={`Struk ${review.data.receipt.fileName}`} className="max-h-[650px] w-full object-contain" /> : <span className="text-xs text-[var(--ai-muted)]">Memuat foto struk…</span>}</div>
+          <div className="relative grid min-h-[360px] place-items-center overflow-hidden rounded-xl bg-black/40">{imageSrc ? <><img src={imageSrc} alt={`Struk ${review.data.receipt.fileName}`} data-receipt-image-state={imageState} onLoad={() => setImageState((state) => transitionReceiptImageState(state, "load"))} onError={() => { setImageSrc(null); setImageLoadError(true); setImageState((state) => transitionReceiptImageState(state, "error")); }} className={`max-h-[650px] w-full object-contain ${imageState === "loaded" ? "" : "invisible absolute"}`} />{imageState !== "loaded" ? <LoaderCircle className="h-5 w-5 animate-spin text-white" aria-label="Memuat foto struk" /> : null}</> : imageLoadError ? <span className="px-6 text-center text-xs text-[var(--ai-muted)]">Foto struk tidak dapat dimuat. Coba muat ulang halaman ini.</span> : <LoaderCircle className="h-5 w-5 animate-spin text-white" aria-label="Memuat foto struk" />}</div>
           <div className="mt-4 flex items-center justify-between text-xs text-[var(--ai-muted)]"><span className="truncate pr-4">{review.data.receipt.fileName}</span><span className={`ai-confidence rounded-full px-2 py-1 text-[10px] font-bold ${confidenceTone(extraction.confidence.overall)}`}>Keyakinan {Math.round(extraction.confidence.overall * 100)}%</span></div>
         </article>
         <article className="ai-review-draft rounded-[1.5rem] border border-white/20 bg-[var(--ai-panel)] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] lg:p-6">

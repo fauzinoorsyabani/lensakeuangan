@@ -54,3 +54,4 @@
 - [x] Memperbaiki urutan route agar Dashboard tidak menangkap URL Scan, Transaksi, Pengaturan, dan Review sebelum halaman tujuan dirender.
 - [ ] Memperbaiki Review approved agar kategori transaksi tersimpan digunakan sebagai nilai form dan gambar receipt sumber dapat ditampilkan melalui proxy terproteksi.
 - [ ] Membuat draft receipt `needs_review` terpisah dari struk pengguna, mengubah field review, menyetujui draft, dan memverifikasi perubahan transaksi tersimpan tanpa mengubah transaksi awal.
+- [x] Memulihkan baseline repository terbaru setelah reset sandbox dan menerapkan kembali perbaikan Review gambar receipt terproteksi beserta verifikasinya.

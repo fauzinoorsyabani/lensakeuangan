@@ -28,4 +28,12 @@ describe("ReceiptReview monokrom status contract", () => {
     expect(source).toContain('"Muat ulang Review"');
     expect(source).toContain("void review.refetch()");
   });
+
+  it("loads the protected receipt image with preview-safe authentication", () => {
+    expect(source).toContain('credentials: "include"');
+    expect(source).toContain("getPreviewAuthHeaders()");
+    expect(source).toContain("URL.createObjectURL(image)");
+    expect(source).toContain("data-receipt-image-state={imageState}");
+    expect(source).toContain('transitionReceiptImageState(state, "load")');
+  });
 });
